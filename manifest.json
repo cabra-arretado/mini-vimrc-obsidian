@@ -3,9 +3,9 @@
 	"name": "Mini Vimrc",
 	"version": "0.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "This is a test plugin for Obsidian. The objective is to incorporate some of the vimrc features into Obsidian.",
-	"author": "cabra-arretado",
+	"description": "A minimal vimrc plugin for Obsidian.",
+	"author": "Cabra Arretado",
 	"authorUrl": "https://github.com/cabra-arretado",
-	"fundingUrl": null,
-	"isDesktopOnly": true,
+	"fundingUrl": "",
+	"isDesktopOnly": false
 }
