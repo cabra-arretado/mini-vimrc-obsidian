@@ -10,19 +10,47 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
 }
 
-function click_ribbon_icon() {
-	new Notice('Ribbon icon clicked!');
-}
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
+
+	/* PLUGIN LOGIC HERE */
+	click_ribbon_icon() {
+		// TODO: Eventually this should run the commands
+		let view = this.app.workspace.getActiveViewOfType(MarkdownView)
+		view = (view as any).editMode?.cm?.cm
+		let CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
+		console.log("View: ", view)
+		console.log("CodeMirrorVimObj: ", CodeMirrorVimObj) // We can see the docs here: https://github.com/replit/codemirror-vim/tree/2f871797743a46628155477bae18f2f3f88a3c44
+
+		if (CodeMirrorVimObj) {
+			console.log("inside if");
+			// This actually sets the jk to Esc
+			CodeMirrorVimObj = (CodeMirrorVimObj as any).map('jk', '<Esc>', 'insert');
+			/////////
+		}
+
+		function set_imap(vimObject: any) {
+			vimObject.defineEx('iunmap', '', (cm: any, params: any) => {
+				if (params.argString.trim()) {
+					this.codeMirrorVimObject.unmap(params.argString.trim(), 'insert');
+				}
+			});
+		}
+		if (view) {
+			// print the view properties
+		}
+
+
+		new Notice('Ribbon icon clicked!');
+	}
 
 	async onload() {
 		await this.loadSettings();
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-			click_ribbon_icon();
+			this.click_ribbon_icon();
 		});
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
