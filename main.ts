@@ -25,9 +25,15 @@ export default class MyPlugin extends Plugin {
 		new Notice('Ribbon icon clicked!');
 	}
 
-	async read_file(path: string) {
+	async read_file(path: string): Promise<string> {
+		try {
 		let file = await this.app.vault.adapter.read(path as any);
-		console.log(file);
+		console.log(`Read file ${path}`);
+		return file;
+		}
+		catch (err) {
+			throw new Error(`Failed to read file ${path}`);
+		}
 	}
 
 	set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal') {
