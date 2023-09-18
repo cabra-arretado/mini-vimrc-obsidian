@@ -26,7 +26,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	async read_file(path: string) {
-		let file = await this.app.vault.read(path as any);
+		let file = await this.app.vault.adapter.read(path as any);
 		console.log(file);
 	}
 
