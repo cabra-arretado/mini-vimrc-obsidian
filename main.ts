@@ -39,18 +39,23 @@ export default class MyPlugin extends Plugin {
 		let lines = file.split('\n');
 		console.log("Processing vimrc file", lines.length, "lines");
 		for (let line of lines) {
+			this.process_line(line)
+		}
+	}
+
+	process_line(line: string){
 			if (line.length == 0) {
-				continue;
+				return
 			}
-			console.log("Processing line", line);
 			let line_arr = line.split(' ');
 			let mapMode = MapMode[line_arr[0] as keyof typeof MapMode].toString();
 			let lhs = line_arr[1];
 			let rhs = line_arr[2];
 			console.log("mapMode", mapMode, "lhs", lhs, "rhs", rhs);
 			this.set_vim_keybidding(lhs, rhs, mapMode);
-		}
+
 	}
+		
 
 	async read_file(path: string): Promise<string> {
 		try {
