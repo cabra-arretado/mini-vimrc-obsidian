@@ -10,42 +10,76 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
 }
 
+enum MapMode {
+	'nmap' = 'normal',
+	'vmap' = 'visual',
+	'imap' = 'insert',
+}
+
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
+	private CodeMirrorVimObj: any = null;
+	vimrc_path: string = '.vimrc';
 
 	/* PLUGIN LOGIC HERE */
 	click_ribbon_icon() {
-		// TODO: Eventually this should run the commands
-		let view = this.app.workspace.getActiveViewOfType(MarkdownView)
-		view = (view as any).editMode?.cm?.cm
-		let CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
-		console.log("View: ", view)
-		console.log("CodeMirrorVimObj: ", CodeMirrorVimObj) // We can see the docs here: https://github.com/replit/codemirror-vim/tree/2f871797743a46628155477bae18f2f3f88a3c44
-
-		if (CodeMirrorVimObj) {
-			console.log("inside if");
-			// This actually sets the jk to Esc
-			CodeMirrorVimObj = (CodeMirrorVimObj as any).map('jk', '<Esc>', 'insert');
-			/////////
+		if (this.CodeMirrorVimObj) {
+			// this.set_vim_keybidding('jk', '<Esc>');
+			this.process_vimrc();
 		}
-
-		function set_imap(vimObject: any) {
-			vimObject.defineEx('iunmap', '', (cm: any, params: any) => {
-				if (params.argString.trim()) {
-					this.codeMirrorVimObject.unmap(params.argString.trim(), 'insert');
-				}
-			});
-		}
-		if (view) {
-			// print the view properties
-		}
-
-
 		new Notice('Ribbon icon clicked!');
 	}
+	//TODO: 1: Function for deserialize vimrc file
+
+	get_view(): MarkdownView | null {
+		return this.app.workspace.getActiveViewOfType(MarkdownView);
+	}
+
+	async process_vimrc() {
+		let file = await this.read_file(this.vimrc_path);
+		let lines = file.split('\n');
+		console.log("Processing vimrc file", lines.length, "lines");
+		for (let line of lines) {
+			if (line.length == 0) {
+				continue;
+			}
+			console.log("Processing line", line);
+			let line_arr = line.split(' ');
+			let mapMode = MapMode[line_arr[0] as keyof typeof MapMode];
+			let lhs = line_arr[1] as string;
+			let rhs = line_arr[2] as string;
+			console.log("mapMode", mapMode, "lhs", lhs, "rhs", rhs);
+			this.set_vim_keybidding(lhs, rhs, mapMode.toString());
+		}
+	}
+
+	async read_file(path: string): Promise<string> {
+		try {
+			let file = await this.app.vault.adapter.read(path);
+			console.log(`Read file ${path}`);
+			return file;
+		}
+		catch (err) {
+			throw new Error(`Failed to read file ${path}`);
+		}
+	}
+
+	set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal') {
+		(this.CodeMirrorVimObj as any).map(lhs, rhs, mode);
+		console.log(`set_vim_keybidding: ${lhs} -> ${rhs} in ${mode} mode`)
+	};
+
+	async initialize() {
+		this.CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
+		if (this.CodeMirrorVimObj) {
+			console.log("CodeMirrorVimObj exists");
+		}
+	}
+	/* END PLUGIN LOGIC */
 
 	async onload() {
+		await this.initialize();
 		await this.loadSettings();
 
 		// This creates an icon in the left ribbon.
