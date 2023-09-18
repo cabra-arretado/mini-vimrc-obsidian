@@ -10,6 +10,12 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
 }
 
+enum MapMode {
+	'nmap' = 'normal',
+	'vmap' = 'visual',
+	'imap' = 'insert',
+}
+
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
@@ -19,14 +25,33 @@ export default class MyPlugin extends Plugin {
 	/* PLUGIN LOGIC HERE */
 	click_ribbon_icon() {
 		if (this.CodeMirrorVimObj) {
-			this.set_vim_keybidding('jk', '<Esc>');
+			// this.set_vim_keybidding('jk', '<Esc>');
+			this.process_vimrc();
 		}
-		console.log(this.read_file(this.vimrc_path));
 		new Notice('Ribbon icon clicked!');
 	}
+	//TODO: 1: Function for deserialize vimrc file
 
 	get_view(): MarkdownView | null {
 		return this.app.workspace.getActiveViewOfType(MarkdownView);
+	}
+
+	async process_vimrc() {
+		let file = await this.read_file(this.vimrc_path);
+		let lines = file.split('\n');
+		console.log("Processing vimrc file", lines.length, "lines");
+		for (let line of lines) {
+			if (line.length == 0) {
+				continue;
+			}
+			console.log("Processing line", line);
+			let line_arr = line.split(' ');
+			let mapMode = MapMode[line_arr[0] as keyof typeof MapMode];
+			let lhs = line_arr[1] as string;
+			let rhs = line_arr[2] as string;
+			console.log("mapMode", mapMode, "lhs", lhs, "rhs", rhs);
+			this.set_vim_keybidding(lhs, rhs, mapMode.toString());
+		}
 	}
 
 	async read_file(path: string): Promise<string> {
