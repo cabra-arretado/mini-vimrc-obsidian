@@ -14,20 +14,25 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
 	private CodeMirrorVimObj: any = null;
+	vimrc_path: string = '.vimrc';
 
 	/* PLUGIN LOGIC HERE */
 	click_ribbon_icon() {
 		if (this.CodeMirrorVimObj) {
-			console.log("inside if");
 			this.set_vim_keybidding('jk', '<Esc>');
-			this.set_vim_keybidding('ii', 'i pressed ii');
 		}
+		this.read_file(this.vimrc_path);
 		new Notice('Ribbon icon clicked!');
 	}
 
-	async set_vim_keybidding(lft: string, rgt: string, mode: string = 'insert') {
-		(this.CodeMirrorVimObj as any).map(lft, rgt, mode);
-		console.log("CodeMirrorVimObj: ", this.CodeMirrorVimObj);
+	async read_file(path: string) {
+		let file = await this.app.vault.read(path as any);
+		console.log(file);
+	}
+
+	set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal') {
+		(this.CodeMirrorVimObj as any).map(lhs, rhs, mode);
+		console.log(`set_vim_keybidding: ${lhs} -> ${rhs} in ${mode} mode`)
 	};
 
 	async initialize() {
@@ -36,6 +41,7 @@ export default class MyPlugin extends Plugin {
 			console.log("CodeMirrorVimObj exists");
 		}
 	}
+	/* END PLUGIN LOGIC */
 
 	async onload() {
 		await this.initialize();
