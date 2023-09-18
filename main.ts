@@ -22,6 +22,9 @@ export default class MyPlugin extends Plugin {
 	private CodeMirrorVimObj: any = null;
 	vimrc_path: string = '.vimrc';
 
+	//////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////
 	/* PLUGIN LOGIC HERE */
 	click_ribbon_icon() {
 		if (this.CodeMirrorVimObj) {
@@ -34,7 +37,7 @@ export default class MyPlugin extends Plugin {
 		return this.app.workspace.getActiveViewOfType(MarkdownView);
 	}
 
-	async process_vimrc() {
+	async process_vimrc(): Promise<void> {
 		let file = await this.read_file(this.vimrc_path);
 		let lines = file.split('\n');
 		console.log("Processing vimrc file", lines.length, "lines");
@@ -43,19 +46,19 @@ export default class MyPlugin extends Plugin {
 		}
 	}
 
-	process_line(line: string){
-			if (line.length == 0) {
-				return
-			}
-			let line_arr = line.split(' ');
-			let mapMode = MapMode[line_arr[0] as keyof typeof MapMode].toString();
-			let lhs = line_arr[1];
-			let rhs = line_arr[2];
-			console.log("mapMode", mapMode, "lhs", lhs, "rhs", rhs);
-			this.set_vim_keybidding(lhs, rhs, mapMode);
+	process_line(line: string): void {
+		if (line.length == 0) {
+			return
+		}
+		let line_arr = line.split(' ');
+		let mapMode = MapMode[line_arr[0] as keyof typeof MapMode].toString();
+		let lhs = line_arr[1];
+		let rhs = line_arr[2];
+		console.log("mapMode", mapMode, "lhs", lhs, "rhs", rhs);
+		this.set_vim_keybidding(lhs, rhs, mapMode);
 
 	}
-		
+
 
 	async read_file(path: string): Promise<string> {
 		try {
@@ -80,6 +83,9 @@ export default class MyPlugin extends Plugin {
 		}
 	}
 	/* END PLUGIN LOGIC */
+	//////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////
 
 	async onload() {
 		await this.initialize();
