@@ -21,15 +21,19 @@ export default class MyPlugin extends Plugin {
 		if (this.CodeMirrorVimObj) {
 			this.set_vim_keybidding('jk', '<Esc>');
 		}
-		this.read_file(this.vimrc_path);
+		console.log(this.read_file(this.vimrc_path));
 		new Notice('Ribbon icon clicked!');
+	}
+
+	get_view(): MarkdownView | null {
+		return this.app.workspace.getActiveViewOfType(MarkdownView);
 	}
 
 	async read_file(path: string): Promise<string> {
 		try {
-		let file = await this.app.vault.adapter.read(path as any);
-		console.log(`Read file ${path}`);
-		return file;
+			let file = await this.app.vault.adapter.read(path);
+			console.log(`Read file ${path}`);
+			return file;
 		}
 		catch (err) {
 			throw new Error(`Failed to read file ${path}`);
