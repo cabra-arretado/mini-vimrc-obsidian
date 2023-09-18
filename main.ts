@@ -25,12 +25,10 @@ export default class MyPlugin extends Plugin {
 	/* PLUGIN LOGIC HERE */
 	click_ribbon_icon() {
 		if (this.CodeMirrorVimObj) {
-			// this.set_vim_keybidding('jk', '<Esc>');
 			this.process_vimrc();
 		}
 		new Notice('Ribbon icon clicked!');
 	}
-	//TODO: 1: Function for deserialize vimrc file
 
 	get_view(): MarkdownView | null {
 		return this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -46,11 +44,11 @@ export default class MyPlugin extends Plugin {
 			}
 			console.log("Processing line", line);
 			let line_arr = line.split(' ');
-			let mapMode = MapMode[line_arr[0] as keyof typeof MapMode];
-			let lhs = line_arr[1] as string;
-			let rhs = line_arr[2] as string;
+			let mapMode = MapMode[line_arr[0] as keyof typeof MapMode].toString();
+			let lhs = line_arr[1];
+			let rhs = line_arr[2];
 			console.log("mapMode", mapMode, "lhs", lhs, "rhs", rhs);
-			this.set_vim_keybidding(lhs, rhs, mapMode.toString());
+			this.set_vim_keybidding(lhs, rhs, mapMode);
 		}
 	}
 
