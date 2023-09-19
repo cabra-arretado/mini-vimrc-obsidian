@@ -36,23 +36,26 @@ export default class MyPlugin extends Plugin {
 		/* Reads and executes one-by-one lines of the Vimrc file */
 		let file = await this.read_file(this.vimrc_path);
 		let lines = file.split('\n');
+		//TODO: Add number to the line so that we can log errors
 		this.logger("Processing vimrc file", lines.length.toString(), "lines");
 		for (let line of lines) {
-			this.process_line(line)
+			this.process_line(line.split(' '));
 		}
 		new Notice('vimrc loaded')
 	}
 
-	process_line(line: string): void {
+	process_line(line: string[]): void {
 		/* Process a single line and runs the command there */
+		if (line.length == 0) return;
 		this.process_maps(line)
 	}
 
 	async read_file(path: string): Promise<string> {
+		/* The name says it all */
 		try {
 			let file = await this.app.vault.adapter.read(path);
 			this.logger(`Read file ${path}`);
-			return file;
+			return file.trim();
 		}
 		catch (err) {
 			new Notice(`Could not find the file in ${path}`)
@@ -68,24 +71,28 @@ export default class MyPlugin extends Plugin {
 
 	async initialize() {
 		/* Runs in the onload() */
-		this.CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
-		if (this.CodeMirrorVimObj) {
-			// this.logger('CMObj Present')
+		if (!this.CodeMirrorVimObj) {
+			this.CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
 		}
 	}
 
-	process_maps(line: string) {
-		let map_args = line.trim().split(' ');
+	process_maps(line: string[]) {
+		/* Process the map command */
 		//TODO: Check if it is on the enum
-		let mapMode = MapMode[map_args[0] as keyof typeof MapMode].toString();
-		if (!mapMode){
-			this.logger('Could not map line.', line, '. There is no map command')
+		if (!(line[0] in MapMode)){
+			console.log(`'${line[0]}' not supported`)
 			return
 		}
-		let lhs = map_args[1];
-		let rhs = map_args[2];
+
+		let mapMode = MapMode[line[0] as keyof typeof MapMode].toString();
+		if (!mapMode){
+			this.logger('Could not map line.', ...line, '. There is no map command')
+			return
+		}
+		let lhs = line[1];
+		let rhs = line[2];
 		if (!lhs || !rhs){
-			this.logger('Could not map line.', line, 'lhs or rhs not present')
+			this.logger('Could not map line.', ...line, 'lhs or rhs not present')
 			return
 		}
 		this.logger(`Successfully mapped! ${line}`)
@@ -93,6 +100,7 @@ export default class MyPlugin extends Plugin {
 	}
 
 	private logger(...messages: string[]): void {
+		/* To log messages to user */
 		let prefix = 'Mini Vimrc Plugin:';
 		console.log(prefix, messages);
 	}
