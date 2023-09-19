@@ -63,7 +63,7 @@ export default class MiniVimrc extends Plugin {
 		}
 	}
 
-	private set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal') {
+	private set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal'): void {
 		/* Set keybidings of imap, nmap, vmap */
 		(this.CodeMirrorVimObj as any).map(lhs, rhs, mode);
 		this.logger(`set_vim_keybidding: ${lhs} -> ${rhs} in ${mode} mode`)
