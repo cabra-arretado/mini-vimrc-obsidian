@@ -1,12 +1,12 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, MarkdownView, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
-interface MyPluginSettings {
+interface MiniVimrcSettings {
 	mySetting: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: MiniVimrcSettings = {
 	mySetting: 'default'
 }
 
@@ -17,8 +17,8 @@ enum MapMode {
 }
 
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class MiniVimrc extends Plugin {
+	settings: MiniVimrcSettings;
 	private CodeMirrorVimObj: any = null;
 	private vimrc_path: string = '.vimrc';
 	
@@ -140,10 +140,10 @@ export default class MyPlugin extends Plugin {
 
 class SampleSettingTab extends PluginSettingTab {
 	/* Setting to be seen in the Settings tab */
-	plugin: MyPlugin;
+	plugin: MiniVimrc;
 	//TODO: Add .vimrc path here
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: MiniVimrc) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
