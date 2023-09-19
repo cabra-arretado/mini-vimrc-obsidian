@@ -32,7 +32,7 @@ export default class MyPlugin extends Plugin {
 		return this.app.workspace.getActiveViewOfType(MarkdownView);
 	}
 
-	async process_vimrc(): Promise<void> {
+	private async process_vimrc(): Promise<void> {
 		/* Reads and executes one-by-one lines of the Vimrc file */
 		let file = await this.read_file(this.vimrc_path);
 		let lines = file.split('\n');
@@ -44,13 +44,13 @@ export default class MyPlugin extends Plugin {
 		new Notice('vimrc loaded')
 	}
 
-	process_line(line: string[]): void {
+	private process_line(line: string[]): void {
 		/* Process a single line and runs the command there */
 		if (line.length == 0) return;
 		this.process_maps(line)
 	}
 
-	async read_file(path: string): Promise<string> {
+	private async read_file(path: string): Promise<string> {
 		/* The name says it all */
 		try {
 			let file = await this.app.vault.adapter.read(path);
@@ -63,20 +63,20 @@ export default class MyPlugin extends Plugin {
 		}
 	}
 
-	set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal') {
+	private set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal') {
 		/* Set keybidings of imap, nmap, vmap */
 		(this.CodeMirrorVimObj as any).map(lhs, rhs, mode);
 		this.logger(`set_vim_keybidding: ${lhs} -> ${rhs} in ${mode} mode`)
 	};
 
-	async initialize() {
+	private async initialize() {
 		/* Runs in the onload() */
 		if (!this.CodeMirrorVimObj) {
 			this.CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
 		}
 	}
 
-	process_maps(line: string[]) {
+	private process_maps(line: string[]) {
 		/* Process the map command */
 		//TODO: Check if it is on the enum
 		if (!(line[0] in MapMode)){
@@ -115,7 +115,7 @@ export default class MyPlugin extends Plugin {
 		await this.initialize();
 		await this.loadSettings();
 		if (this.CodeMirrorVimObj) {
-			this.process_vimrc();
+			await this.process_vimrc();
 			new Notice('Loaded vimrc');
 		}
 		// This adds a settings tab so the user can configure various aspects of the plugin
@@ -139,6 +139,7 @@ export default class MyPlugin extends Plugin {
 }
 
 class SampleSettingTab extends PluginSettingTab {
+	/* Setting to be seen in the Settings tab */
 	plugin: MyPlugin;
 	//TODO: Add .vimrc path here
 

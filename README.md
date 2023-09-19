@@ -1,10 +1,23 @@
 # Mini Vim Keymaps Obsidian Plugin
-In this repo we look for creating a minimal plugin for Obsidian that does only one thing and does it well: *Set Vim Keybidings to Obsidian*
+In this repo we look for creating a minimal plugin for Obsidian that does only one thing and does it well: *Set Vim basic settings to Obsidian Vim mode*
 
-## Motivation
-Obsidian offeers a Vim mode editor, powered by CodeMirror. Keymaps work in such envirironment, but by default it doesn't allow users to automatically set keymaps as Obsidian is initiazated. That causes the user to have to manually enter all the desired keymaps every time one opens Obsidian.
+## Supported Vim settings
+- [x] imap
+- [x] nmap
+- [x] vmap
+- [ ] iunmap
+- [ ] vunmap
+- [ ] nunmap
+- [ ] map
 
-There is where this plugin gets in the game: With an `.vimrc` file in the Obsidian vault, we will be able to declare keymaps to be automatically initialized everytime Obisian is open.
+## Getting started
+Create an `.vimrc` in the root of your Obsidian vault with the desired commands.
+
+
+### Motivation
+Obsidian offeers a Vim mode editor, powered by CodeMirror. Keymaps work in such envirironment, but by default it doesn't allow users to automatically set keymaps as it is initiazated. That causes the user to have to manually enter all the desired keymaps every time one opens Obsidian.
+
+There is where this plugin gets in the game: With an `.vimrc` file in the Obsidian vault, we will be able to declare keymaps and set basic optiosn to be automatically initialized everytime Obisian is open.
 
 ### Why a plugin that do only keymaps and not only all the other Vim configurations?
 We want to create a plugin that is minimal and perform only one function.
@@ -14,5 +27,5 @@ With that design the plugin becomes:
 
 If you are looking for a more complete functionality plugin you should check out: [obsidian-vimrc-support](https://github.com/esm7/obsidian-vimrc-support)
 
-## Inspiration
+### Inspiration
 * obsidian-vimrc-support (https://github.com/esm7/obsidian-vimrc-support)
