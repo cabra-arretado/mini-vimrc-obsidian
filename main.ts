@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Workspace, Setting } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
@@ -32,8 +32,8 @@ export default class MyPlugin extends Plugin {
 		// Right now that is just the entrypoint for the plugin
 		if (this.CodeMirrorVimObj) {
 			this.process_vimrc();
+			new Notice('Loaded vimrc');
 		}
-		new Notice('Loaded vimrc');
 	}
 
 	get_view(): MarkdownView | null {
@@ -109,10 +109,14 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.initialize();
 		await this.loadSettings();
+		if (this.CodeMirrorVimObj) {
+			this.process_vimrc();
+			new Notice('Loaded vimrc');
+		}
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-			this.click_ribbon_icon();
+			// this.click_ribbon_icon();
 		});
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
