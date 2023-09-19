@@ -28,14 +28,6 @@ export default class MyPlugin extends Plugin {
 	//////////////////////////////////////////////////////////////
 	/* PLUGIN LOGIC HERE */
 
-	click_ribbon_icon() {
-		// Right now that is just the entrypoint for the plugin
-		if (this.CodeMirrorVimObj) {
-			this.process_vimrc();
-			new Notice('Loaded vimrc');
-		}
-	}
-
 	get_view(): MarkdownView | null {
 		return this.app.workspace.getActiveViewOfType(MarkdownView);
 	}
@@ -44,7 +36,7 @@ export default class MyPlugin extends Plugin {
 		/* Reads and executes one-by-one lines of the Vimrc file */
 		let file = await this.read_file(this.vimrc_path);
 		let lines = file.split('\n');
-		console.log("Processing vimrc file", lines.length, "lines");
+		this.logger("Processing vimrc file", lines.length.toString(), "lines");
 		for (let line of lines) {
 			this.process_line(line)
 		}
@@ -59,7 +51,7 @@ export default class MyPlugin extends Plugin {
 	async read_file(path: string): Promise<string> {
 		try {
 			let file = await this.app.vault.adapter.read(path);
-			console.log(`Read file ${path}`);
+			this.logger(`Read file ${path}`);
 			return file;
 		}
 		catch (err) {
@@ -71,14 +63,14 @@ export default class MyPlugin extends Plugin {
 	set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal') {
 		/* Set keybidings of imap, nmap, vmap */
 		(this.CodeMirrorVimObj as any).map(lhs, rhs, mode);
-		console.log(`set_vim_keybidding: ${lhs} -> ${rhs} in ${mode} mode`)
+		this.logger(`set_vim_keybidding: ${lhs} -> ${rhs} in ${mode} mode`)
 	};
 
 	async initialize() {
 		/* Runs in the onload() */
 		this.CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
 		if (this.CodeMirrorVimObj) {
-			// console.log('CMObj Present')
+			// this.logger('CMObj Present')
 		}
 	}
 
@@ -87,17 +79,22 @@ export default class MyPlugin extends Plugin {
 		//TODO: Check if it is on the enum
 		let mapMode = MapMode[map_args[0] as keyof typeof MapMode].toString();
 		if (!mapMode){
-			console.log('Could not map line.', line, '. There is no map command')
+			this.logger('Could not map line.', line, '. There is no map command')
 			return
 		}
 		let lhs = map_args[1];
 		let rhs = map_args[2];
 		if (!lhs || !rhs){
-			console.log('Could not map line.', line, 'lhs or rhs not present')
+			this.logger('Could not map line.', line, 'lhs or rhs not present')
 			return
 		}
-		console.log(`Successfully mapped! ${line}`)
+		this.logger(`Successfully mapped! ${line}`)
 		this.set_vim_keybidding(lhs, rhs, mapMode);
+	}
+
+	private logger(...messages: string[]): void {
+		let prefix = 'Mini Vimrc Plugin:';
+		console.log(prefix, messages);
 	}
 
 	
