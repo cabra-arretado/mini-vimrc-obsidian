@@ -118,15 +118,10 @@ export default class MiniVimrc extends Plugin {
 			await this.process_vimrc();
 			new Notice('Loaded vimrc');
 		}
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
 	onunload() {
-
+		// Nothings right now
 	}
 
 	async loadSettings() {
@@ -138,30 +133,3 @@ export default class MiniVimrc extends Plugin {
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
-	/* Setting to be seen in the Settings tab */
-	plugin: MiniVimrc;
-	//TODO: Add .vimrc path here
-
-	constructor(app: App, plugin: MiniVimrc) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const { containerEl } = this;
-
-		containerEl.empty();
-
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
-	}
-}
