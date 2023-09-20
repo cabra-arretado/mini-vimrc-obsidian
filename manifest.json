@@ -3,9 +3,8 @@
 	"name": "Mini Vimrc",
 	"version": "0.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "A minimal vimrc plugin for Obsidian.",
-	"author": "Cabra Arretado",
+	"description": "Minimal plugin to add Vim keybiddings to Obsidian via .vimrc",
+	"author": "Felipe M.",
 	"authorUrl": "https://github.com/cabra-arretado",
-	"fundingUrl": "",
-	"isDesktopOnly": false
+	"isDesktopOnly": true
 }
