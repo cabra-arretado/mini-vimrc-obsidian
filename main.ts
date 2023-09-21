@@ -14,7 +14,7 @@ enum MapMode {
 	'nmap' = 'normal',
 	'vmap' = 'visual',
 	'imap' = 'insert',
-	'map' = '',
+	'map' = 'global',
 }
 
 export default class MiniVimrc extends Plugin {
@@ -72,7 +72,7 @@ export default class MiniVimrc extends Plugin {
 
 	private set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal'): void {
 		/* Set keybidings of imap, nmap, vmap */
-		if (mode === '') {
+		if (mode === 'global') {
 			console.log('Trying to map all');
 			(this.CodeMirrorVimObj as any).map(lhs, rhs);
 			return
