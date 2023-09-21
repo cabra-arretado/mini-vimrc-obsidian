@@ -14,7 +14,7 @@ enum MapMode {
 	'nmap' = 'normal',
 	'vmap' = 'visual',
 	'imap' = 'insert',
-	// TODO: Add option for :map
+	'map' = '',
 }
 
 export default class MiniVimrc extends Plugin {
@@ -42,6 +42,7 @@ export default class MiniVimrc extends Plugin {
 		}
 		new Notice('vimrc loaded')
 	}
+
 	// Test: yank to clipboard
 	private async yank_to_clipboard(): Promise<void> {
 		let register_controler = this.CodeMirrorVimObj.getRegisterController();
@@ -71,6 +72,11 @@ export default class MiniVimrc extends Plugin {
 
 	private set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal'): void {
 		/* Set keybidings of imap, nmap, vmap */
+		if (mode === '') {
+			console.log('Trying to map all');
+			(this.CodeMirrorVimObj as any).map(lhs, rhs);
+			return
+		}
 		(this.CodeMirrorVimObj as any).map(lhs, rhs, mode);
 		this.logger(`set_vim_keybidding: (${lhs}, ${rhs}, ${mode})`)
 	};
