@@ -14,29 +14,24 @@ enum MapMode {
 	'nmap' = 'normal',
 	'vmap' = 'visual',
 	'imap' = 'insert',
+	'map' = 'global',
 }
-
 
 export default class MiniVimrc extends Plugin {
 	settings: MiniVimrcSettings;
 	private CodeMirrorVimObj: any = null;
 	private vimrc_path: string = '.vimrc';
-	
+
 
 	//////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////
 	/* PLUGIN LOGIC HERE */
 
-	get_view(): MarkdownView | null {
-		return this.app.workspace.getActiveViewOfType(MarkdownView);
-	}
-
 	private async process_vimrc(): Promise<void> {
 		/* Reads and executes one-by-one lines of the Vimrc file */
 		let file = await this.read_file(this.vimrc_path);
 		let lines = file.split('\n');
-		//TODO: Add number to the line so that we can log errors
 		this.logger("Processing vimrc file", lines.length.toString(), "lines");
 		for (let line of lines) {
 			this.process_line(line.split(' '));
@@ -65,8 +60,13 @@ export default class MiniVimrc extends Plugin {
 
 	private set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal'): void {
 		/* Set keybidings of imap, nmap, vmap */
-		(this.CodeMirrorVimObj as any).map(lhs, rhs, mode);
-		this.logger(`set_vim_keybidding: ${lhs} -> ${rhs} in ${mode} mode`)
+		let cmo = this.CodeMirrorVimObj as any;
+		if (mode === MapMode['map']) {
+			cmo.map(lhs, rhs);
+			return
+		}
+		cmo.map(lhs, rhs, mode);
+		this.logger(`set_vim_keybidding: (${lhs}, ${rhs}, ${mode})`)
 	};
 
 	private async initialize() {
@@ -79,19 +79,19 @@ export default class MiniVimrc extends Plugin {
 	private process_maps(line: string[]) {
 		/* Process the map command */
 		//TODO: Check if it is on the enum
-		if (!(line[0] in MapMode)){
+		if (!(line[0] in MapMode)) {
 			console.log(`'${line[0]}' not supported`)
 			return
 		}
 
 		let mapMode = MapMode[line[0] as keyof typeof MapMode].toString();
-		if (!mapMode){
+		if (!mapMode) {
 			this.logger('Could not map line.', ...line, '. There is no map command')
 			return
 		}
 		let lhs = line[1];
 		let rhs = line[2];
-		if (!lhs || !rhs){
+		if (!lhs || !rhs) {
 			this.logger('Could not map line.', ...line, 'lhs or rhs not present')
 			return
 		}
@@ -105,7 +105,7 @@ export default class MiniVimrc extends Plugin {
 		console.log(prefix, messages);
 	}
 
-	
+
 	/* END PLUGIN LOGIC */
 	//////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////
