@@ -20,20 +20,16 @@ imap jk <Esc>
 imap JK <Esc>
 
 " The keys j and k for visual and normal mode go to visual line instead of logical one (Really useful for a more organic experience)
-nmap j gj
-nmap k gk
-vmap j gj
-vmap k gk
+map j gj
+map k gk
 
-" Uses H and L To navegate between blank lines.
-nmap H {
-nmap L }
+" Uses H and L To navegate between blank lines Visual and Normal modes.
+map H {
+map L }
 
 " Uses K and J to scroll back and foward in Visual and Normal modes
-nmap K <C-b>
-vmap K <C-b>
-nmap J <C-f>
-vmap J <C-f>
+map K <C-b>
+map K <C-b>
 
 " Uses ; to start commands in Visual and Normal modes
 map ; :
