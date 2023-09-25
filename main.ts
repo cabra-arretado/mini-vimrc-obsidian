@@ -28,10 +28,6 @@ export default class MiniVimrc extends Plugin {
 	//////////////////////////////////////////////////////////////
 	/* PLUGIN LOGIC HERE */
 
-	get_view(): MarkdownView | null {
-		return this.app.workspace.getActiveViewOfType(MarkdownView);
-	}
-
 	private async process_vimrc(): Promise<void> {
 		/* Reads and executes one-by-one lines of the Vimrc file */
 		let file = await this.read_file(this.vimrc_path);
@@ -41,14 +37,6 @@ export default class MiniVimrc extends Plugin {
 			this.process_line(line.split(' '));
 		}
 		new Notice('vimrc loaded')
-	}
-
-	// Test: yank to clipboard
-	private async yank_to_clipboard(): Promise<void> {
-		let register_controler = this.CodeMirrorVimObj.getRegisterController();
-		console.log(register_controler)
-		// this.CodeMirrorVimObj.defineEx('yank')
-
 	}
 
 	private process_line(line: string[]): void {
@@ -72,11 +60,12 @@ export default class MiniVimrc extends Plugin {
 
 	private set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal'): void {
 		/* Set keybidings of imap, nmap, vmap */
+		let cmo = this.CodeMirrorVimObj as any;
 		if (mode === MapMode['map']) {
-			(this.CodeMirrorVimObj as any).map(lhs, rhs);
+			cmo.map(lhs, rhs);
 			return
 		}
-		(this.CodeMirrorVimObj as any).map(lhs, rhs, mode);
+		cmo.map(lhs, rhs, mode);
 		this.logger(`set_vim_keybidding: (${lhs}, ${rhs}, ${mode})`)
 	};
 
@@ -84,7 +73,6 @@ export default class MiniVimrc extends Plugin {
 		/* Runs in the onload() */
 		if (!this.CodeMirrorVimObj) {
 			this.CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
-			this.yank_to_clipboard();
 		}
 	}
 
