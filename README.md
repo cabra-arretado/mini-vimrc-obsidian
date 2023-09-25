@@ -29,9 +29,11 @@ vmap k gk
 nmap H {
 nmap L }
 
-" Uses K and J to scroll back and foward
+" Uses K and J to scroll back and foward in Visual and Normal modes
 nmap K <C-b>
+vmap K <C-b>
 nmap J <C-f>
+vmap J <C-f>
 
 " Uses ; to start commands in Visual and Normal modes
 map ; :
