@@ -121,7 +121,10 @@ export default class MiniVimrc extends Plugin {
 	}
 
 	onunload() {
-		// Nothings right now
+		if (this.CodeMirrorVimObj) {
+			this.CodeMirrorVimObj.mapclear();
+			this.logger('Unloaded vimrc');
+		}
 	}
 
 	async loadSettings() {
