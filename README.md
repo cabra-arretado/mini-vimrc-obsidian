@@ -29,7 +29,7 @@ map L }
 
 " Uses K and J to scroll back and foward in Visual and Normal modes
 map K <C-b>
-map K <C-b>
+map J <C-f>
 
 " Uses ; to start commands in Visual and Normal modes
 map ; :
