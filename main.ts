@@ -1,4 +1,4 @@
-import { App, MarkdownView, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { Notice, Plugin } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
 
@@ -18,15 +18,10 @@ enum MapMode {
 }
 
 export default class MiniVimrc extends Plugin {
+	/*  */
 	settings: MiniVimrcSettings;
 	private CodeMirrorVimObj: any = null;
 	private vimrc_path: string = '.vimrc';
-
-
-	//////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////
-	/* PLUGIN LOGIC HERE */
 
 	private async process_vimrc(): Promise<void> {
 		/* Reads and executes one-by-one lines of the Vimrc file */
@@ -104,12 +99,6 @@ export default class MiniVimrc extends Plugin {
 		let prefix = 'Mini Vimrc Plugin:';
 		console.log(prefix, messages);
 	}
-
-
-	/* END PLUGIN LOGIC */
-	//////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////
 
 	async onload() {
 		await this.initialize();
