@@ -11,6 +11,8 @@ In this repo we look for creating a minimal plugin for Obsidian that does only o
 - [ ] nunmap
 
 ## Getting started
+FIRST OF ALL: Remember to Activate the Vim mode in your Vault. Settings -> Editor -> Vim key biddings
+
 Create an `.vimrc` in the root of your Obsidian vault with the desired commands.
 
 ### Example of `.vimrc`

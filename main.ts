@@ -1,7 +1,5 @@
 import { Notice, Plugin } from 'obsidian';
 
-// Remember to rename these classes and interfaces!
-
 interface MiniVimrcSettings {
 	mySetting: string;
 }
@@ -16,6 +14,13 @@ enum MapMode {
 	'imap' = 'insert',
 	'map' = 'global',
 }
+//TODO:
+// 1 - Do not process comments in the .vimrc file
+// 2 - Remove double Notice when Vimrc is not found
+//
+//MAYBE:
+// 1 - Create an option to change the vimrc path
+// 2 - Create defaults options?
 
 export default class MiniVimrc extends Plugin {
 	/*  */
