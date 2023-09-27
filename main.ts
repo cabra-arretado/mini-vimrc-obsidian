@@ -17,10 +17,11 @@ enum MapMode {
 //TODO:
 // 1 - Do not process comments in the .vimrc file
 // 2 - Remove double Notice when Vimrc is not found
-//
+
 //MAYBE:
 // 1 - Create an option to change the vimrc path
 // 2 - Create defaults options?
+// 3 - Create GUI to change the options without explicitly creating a .vimrc file
 
 export default class MiniVimrc extends Plugin {
 	/*  */
