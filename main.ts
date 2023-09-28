@@ -16,7 +16,6 @@ enum MapMode {
 }
 
 export default class MiniVimrc extends Plugin {
-	/*  */
 	settings: MiniVimrcSettings;
 	private CodeMirrorVimObj: any = null;
 	private vimrc_path: string = '.vimrc';
