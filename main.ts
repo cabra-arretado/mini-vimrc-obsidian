@@ -1,6 +1,4 @@
-import { App, MarkdownView, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-
-// Remember to rename these classes and interfaces!
+import { Notice, Plugin } from 'obsidian';
 
 interface MiniVimrcSettings {
 	mySetting: string;
@@ -22,27 +20,25 @@ export default class MiniVimrc extends Plugin {
 	private CodeMirrorVimObj: any = null;
 	private vimrc_path: string = '.vimrc';
 
-
-	//////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////
-	/* PLUGIN LOGIC HERE */
-
 	private async process_vimrc(): Promise<void> {
 		/* Reads and executes one-by-one lines of the Vimrc file */
 		let file = await this.read_file(this.vimrc_path);
 		let lines = file.split('\n');
 		this.logger("Processing vimrc file", lines.length.toString(), "lines");
 		for (let line of lines) {
-			this.process_line(line.split(' '));
+			this.process_line(line);
 		}
-		new Notice('vimrc loaded')
+		new Notice('Vimrc loaded!')
 	}
 
-	private process_line(line: string[]): void {
+	private process_line(line: string): void {
 		/* Process a single line and runs the command there */
-		if (line.length == 0) return;
-		this.process_maps(line)
+		let trimmed_line = line.trim();
+		if (trimmed_line.startsWith('"') || trimmed_line.length == 0){
+		// Ignore comments and empty lines
+			return
+		}
+		this.process_maps(trimmed_line.split(' '))
 	}
 
 	private async read_file(path: string): Promise<string> {
@@ -78,7 +74,6 @@ export default class MiniVimrc extends Plugin {
 
 	private process_maps(line: string[]) {
 		/* Process the map command */
-		//TODO: Check if it is on the enum
 		if (!(line[0] in MapMode)) {
 			console.log(`'${line[0]}' not supported`)
 			return
@@ -105,18 +100,11 @@ export default class MiniVimrc extends Plugin {
 		console.log(prefix, messages);
 	}
 
-
-	/* END PLUGIN LOGIC */
-	//////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////
-
 	async onload() {
 		await this.initialize();
 		await this.loadSettings();
 		if (this.CodeMirrorVimObj) {
 			await this.process_vimrc();
-			new Notice('Loaded vimrc');
 		}
 	}
 
