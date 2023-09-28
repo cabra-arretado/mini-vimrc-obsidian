@@ -14,9 +14,6 @@ enum MapMode {
 	'imap' = 'insert',
 	'map' = 'global',
 }
-//TODO:
-// 1 - Do not process comments in the .vimrc file
-// 2 - Remove double Notice when Vimrc is not found
 
 //MAYBE:
 // 1 - Create an option to change the vimrc path
@@ -39,7 +36,7 @@ export default class MiniVimrc extends Plugin {
 			if (trimmed_line.startsWith('"')) continue;
 			this.process_line(trimmed_line.split(' '));
 		}
-		new Notice('vimrc loaded')
+		new Notice('Vimrc loaded!')
 	}
 
 	private process_line(line: string[]): void {
@@ -113,7 +110,6 @@ export default class MiniVimrc extends Plugin {
 		await this.loadSettings();
 		if (this.CodeMirrorVimObj) {
 			await this.process_vimrc();
-			new Notice('Loaded vimrc');
 		}
 	}
 
