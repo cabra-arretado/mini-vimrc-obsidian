@@ -15,11 +15,6 @@ enum MapMode {
 	'map' = 'global',
 }
 
-//MAYBE:
-// 1 - Create an option to change the vimrc path
-// 2 - Create defaults options?
-// 3 - Create GUI to change the options without explicitly creating a .vimrc file
-
 export default class MiniVimrc extends Plugin {
 	/*  */
 	settings: MiniVimrcSettings;
@@ -32,17 +27,19 @@ export default class MiniVimrc extends Plugin {
 		let lines = file.split('\n');
 		this.logger("Processing vimrc file", lines.length.toString(), "lines");
 		for (let line of lines) {
-			let trimmed_line = line.trim();
-			if (trimmed_line.startsWith('"')) continue;
-			this.process_line(trimmed_line.split(' '));
+			this.process_line(line);
 		}
 		new Notice('Vimrc loaded!')
 	}
 
-	private process_line(line: string[]): void {
+	private process_line(line: string): void {
 		/* Process a single line and runs the command there */
-		if (line.length == 0) return;
-		this.process_maps(line)
+		let trimmed_line = line.trim();
+		if (trimmed_line.startsWith('"') || trimmed_line.length == 0){
+		// Ignore comments and empty lines
+			return
+		}
+		this.process_maps(trimmed_line.split(' '))
 	}
 
 	private async read_file(path: string): Promise<string> {
@@ -78,7 +75,6 @@ export default class MiniVimrc extends Plugin {
 
 	private process_maps(line: string[]) {
 		/* Process the map command */
-		//TODO: Check if it is on the enum
 		if (!(line[0] in MapMode)) {
 			console.log(`'${line[0]}' not supported`)
 			return
