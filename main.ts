@@ -35,7 +35,9 @@ export default class MiniVimrc extends Plugin {
 		let lines = file.split('\n');
 		this.logger("Processing vimrc file", lines.length.toString(), "lines");
 		for (let line of lines) {
-			this.process_line(line.split(' '));
+			let trimmed_line = line.trim();
+			if (trimmed_line.startsWith('"')) continue;
+			this.process_line(trimmed_line.split(' '));
 		}
 		new Notice('vimrc loaded')
 	}
