@@ -1,10 +1,10 @@
 {
 	"id": "mini-vimrc",
 	"name": "Mini Vimrc",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"minAppVersion": "0.15.0",
-	"description": "Set Vim keybiddings via `.vimrc` file",
+	"description": "Set Vim keybiddings via .vimrc file.",
 	"author": "Felipe M.",
 	"authorUrl": "https://github.com/cabra-arretado",
-	"isDesktopOnly": true
+	"isDesktopOnly": false
 }
