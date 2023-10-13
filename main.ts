@@ -34,8 +34,8 @@ export default class MiniVimrc extends Plugin {
 	private process_line(line: string): void {
 		/* Process a single line and runs the command there */
 		let trimmed_line = line.trim();
-		if (trimmed_line.startsWith('"') || trimmed_line.length == 0){
-		// Ignore comments and empty lines
+		if (trimmed_line.startsWith('"') || trimmed_line.length == 0) {
+			// Ignore comments and empty lines
 			return
 		}
 		this.process_maps(trimmed_line.split(' '))
