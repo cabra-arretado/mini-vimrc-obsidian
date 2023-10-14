@@ -46,7 +46,7 @@ export default class MiniVimrc extends Plugin {
 		}
 		let line_map = trimmed_line.split(' ');
 		if (this.is_map(line_map[0])) {
-			this.process_maps(trimmed_line.split(' '))
+			this.process_maps(line_map);
 		}
 	}
 
