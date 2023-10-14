@@ -12,7 +12,7 @@ enum MapMode {
 	'nmap' = 'normal',
 	'vmap' = 'visual',
 	'imap' = 'insert',
-	'map' = 'global',
+	'map' = 'sentinel_value',
 }
 
 export default class MiniVimrc extends Plugin {
