@@ -53,19 +53,17 @@ export default class MiniVimrc extends Plugin {
 			// Ignore comments and empty lines
 			return
 		}
-		let line_map = trimmed_line.split(' ');
-		if (this.is_map(line_map[0])) {
-			this.process_maps(line_map);
+		let line_tokens = trimmed_line.split(' ');
+		if (this.is_map(line_tokens[0])) {
+			this.process_maps(line_tokens);
 		}
-		else if (this.is_unmap(line_map[0])) {
-			this.process_unmaps(line_map);
+		else if (this.is_unmap(line_tokens[0])) {
+			this.process_unmaps(line_tokens);
 		}
 		else {
-			this.logger('Could not process line', line_map[0], 'is not a map or unmap command');
+			this.logger('Could not process line', line_tokens[0], 'is not a map or unmap command');
 		}
 	}
-
-
 
 	private async read_file(path: string): Promise<string> {
 		/* The name says it all */
