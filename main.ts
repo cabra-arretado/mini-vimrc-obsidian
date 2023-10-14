@@ -14,6 +14,12 @@ enum MapMode {
 	'imap' = 'insert',
 	'map' = 'sentinel_value',
 }
+enum UnmapMode {
+	'nunmap' = 'normal',
+	'vunmap' = 'visual',
+	'iunmap' = 'insert',
+	'unmap' = 'sentinel_value',
+}
 
 export default class MiniVimrc extends Plugin {
 	settings: MiniVimrcSettings;
@@ -34,7 +40,10 @@ export default class MiniVimrc extends Plugin {
 	private is_map(first_token: string): boolean {
 		/* Checks if the line is a map command */
 		return first_token in MapMode;
-
+	}
+	private is_unmap(first_token: string): boolean {
+		/* Checks if the line is a unmap command */
+		return first_token in MapMode;
 	}
 
 	private process_line(line: string): void {
@@ -48,9 +57,9 @@ export default class MiniVimrc extends Plugin {
 		if (this.is_map(line_map[0])) {
 			this.process_maps(line_map);
 		}
-		// else if (this.is_unmap(line_map[0])) {
-		// 	this.process_unmaps(line_map);
-		// }
+		else if (this.is_unmap(line_map[0])) {
+			this.process_unmaps(line_map);
+		}
 		else {
 			this.logger('Could not process line', line_map[0], 'is not a map or unmap command');
 		}
@@ -89,11 +98,30 @@ export default class MiniVimrc extends Plugin {
 		}
 	}
 
-	private process_maps(line: string[]) {
+	private process_maps(line_tokens: string[]) {
 		/* Process the map command */
 
-		let mapMode = MapMode[line[0] as keyof typeof MapMode].toString();
+		let mapMode = MapMode[line_tokens[0] as keyof typeof MapMode].toString();
+		//TODO: maybe the bellow is not needed since we are proceesing the keywords in the process_line()
 		if (!mapMode) {
+			this.logger('Could not map line.', ...line_tokens, '. There is no map command')
+			return
+		}
+		let lhs = line_tokens[1];
+		let rhs = line_tokens[2];
+		if (!lhs || !rhs) {
+			this.logger('Could not map line.', ...line_tokens, 'lhs or rhs not present')
+			return
+		}
+		this.logger(`Successfully mapped! ${line_tokens}`)
+		this.set_vim_keybidding(lhs, rhs, mapMode);
+	}
+
+	private process_unmaps(line: string[]) {
+		/* Process the unmap command */
+		let unmapMode = UnmapMode[line[0] as keyof typeof UnmapMode].toString();
+		//TODO: maybe the bellow is not needed since we are proceesing the keywords in the process_line()
+		if (!unmapMode) {
 			this.logger('Could not map line.', ...line, '. There is no map command')
 			return
 		}
@@ -104,7 +132,7 @@ export default class MiniVimrc extends Plugin {
 			return
 		}
 		this.logger(`Successfully mapped! ${line}`)
-		this.set_vim_keybidding(lhs, rhs, mapMode);
+		this.set_vim_keybidding(lhs, rhs, unmapMode);
 	}
 
 	private logger(...messages: string[]): void {
