@@ -31,6 +31,12 @@ export default class MiniVimrc extends Plugin {
 		new Notice('Vimrc loaded!')
 	}
 
+	private is_map(first_token: string): boolean {
+		/* Checks if the line is a map command */
+		return first_token in MapMode;
+
+	}
+
 	private process_line(line: string): void {
 		/* Process a single line and runs the command there */
 		let trimmed_line = line.trim();
@@ -38,8 +44,13 @@ export default class MiniVimrc extends Plugin {
 			// Ignore comments and empty lines
 			return
 		}
-		this.process_maps(trimmed_line.split(' '))
+		let line_map = trimmed_line.split(' ');
+		if (this.is_map(line_map[0])) {
+			this.process_maps(trimmed_line.split(' '))
+		}
 	}
+
+
 
 	private async read_file(path: string): Promise<string> {
 		/* The name says it all */
@@ -74,6 +85,7 @@ export default class MiniVimrc extends Plugin {
 
 	private process_maps(line: string[]) {
 		/* Process the map command */
+		// TODO: Remove that from here (this logic is being handled in process_line/is_map)
 		if (!(line[0] in MapMode)) {
 			console.log(`'${line[0]}' not supported`)
 			return
