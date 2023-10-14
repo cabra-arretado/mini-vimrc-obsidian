@@ -48,6 +48,12 @@ export default class MiniVimrc extends Plugin {
 		if (this.is_map(line_map[0])) {
 			this.process_maps(line_map);
 		}
+		// else if (this.is_unmap(line_map[0])) {
+		// 	this.process_unmaps(line_map);
+		// }
+		else {
+			this.logger('Could not process line', line_map[0], 'is not a map or unmap command');
+		}
 	}
 
 
@@ -85,11 +91,6 @@ export default class MiniVimrc extends Plugin {
 
 	private process_maps(line: string[]) {
 		/* Process the map command */
-		// TODO: Remove that from here (this logic is being handled in process_line/is_map)
-		if (!(line[0] in MapMode)) {
-			console.log(`'${line[0]}' not supported`)
-			return
-		}
 
 		let mapMode = MapMode[line[0] as keyof typeof MapMode].toString();
 		if (!mapMode) {
