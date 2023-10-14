@@ -88,6 +88,10 @@ export default class MiniVimrc extends Plugin {
 		cmo.map(lhs, rhs, mode);
 		this.logger(`set_vim_keybidding: (${lhs}, ${rhs}, ${mode})`)
 	};
+	private set_vim_unmap(lhs: string, rhs: string, mode: string = 'normal'): void {
+		//TODO: Complate this function
+		//DO we need the rhs and lhs
+	}
 
 	private async initialize() {
 		/* Runs in the onload() */
@@ -117,6 +121,7 @@ export default class MiniVimrc extends Plugin {
 
 	private process_unmaps(line: string[]) {
 		/* Process the unmap command */
+		//TODO: Need review. lhs and rhs?
 		let unmapMode = UnmapMode[line[0] as keyof typeof UnmapMode].toString();
 		//TODO: maybe the bellow is not needed since we are proceesing the keywords in the process_line()
 		if (!unmapMode) {
@@ -130,7 +135,7 @@ export default class MiniVimrc extends Plugin {
 			return
 		}
 		this.logger(`Successfully mapped! ${line}`)
-		this.set_vim_keybidding(lhs, rhs, unmapMode);
+		this.set_vim_unmap(lhs, rhs, unmapMode);
 	}
 
 	private logger(...messages: string[]): void {
