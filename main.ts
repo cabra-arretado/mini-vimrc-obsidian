@@ -30,6 +30,7 @@ export default class MiniVimrc extends Plugin {
 		/* Reads and executes one-by-one lines of the Vimrc file */
 		let file = await this.read_file(this.vimrc_path);
 		let lines = file.split('\n');
+		console.log(lines)
 		this.logger("Processing vimrc file", lines.length.toString(), "lines");
 		for (let line of lines) {
 			this.process_line(line);
@@ -43,7 +44,7 @@ export default class MiniVimrc extends Plugin {
 	}
 	private is_unmap(first_token: string): boolean {
 		/* Checks if the line is a unmap command */
-		return first_token in MapMode;
+		return first_token in UnmapMode;
 	}
 
 	private process_line(line: string): void {
@@ -80,24 +81,24 @@ export default class MiniVimrc extends Plugin {
 
 	//TODO: do we need that default normal?
 	private set_vim_map(lhs: string, rhs: string, mode: string = 'normal'): void {
-		/* Set keybidings of imap, nmap, vmap */
+		/* Set keybidings of map, imap, nmap, vmap */
 		let cmo = this.CodeMirrorVimObj as any;
+		this.logger(`set_vim_map: (${lhs} ${rhs} ${mode})`)
 		if (mode === MapMode['map']) {
 			cmo.map(lhs, rhs);
 			return
 		}
 		cmo.map(lhs, rhs, mode);
-		this.logger(`set_vim_map: (${lhs}, ${rhs}, ${mode})`)
 	};
 
 	private set_vim_unmap(lhs: string, mode: string): void {
 		let cmo = this.CodeMirrorVimObj as any;
+		this.logger(`set_vim_unmap: (${lhs}, ${mode})`)
 		if (mode === UnmapMode['unmap']) {
 			cmo.unmap(lhs);
 			return
 		}
 		cmo.unmap(lhs, mode);
-		this.logger(`set_vim_unmap: (${lhs}, ${mode})`)
 	}
 
 	private async initialize() {
@@ -121,7 +122,6 @@ export default class MiniVimrc extends Plugin {
 			this.logger('Could not map line.', ...line_tokens, 'lhs or rhs not present')
 			return
 		}
-		this.logger(`Successfully mapped! ${line_tokens}`)
 		this.set_vim_map(lhs, rhs, mapMode);
 	}
 
@@ -138,7 +138,6 @@ export default class MiniVimrc extends Plugin {
 			this.logger('Could not map line.', ...line, 'lhs not present')
 			return
 		}
-		this.logger(`Successfully unmapped! Line: ${line}`)
 		this.set_vim_unmap(lhs, unmapMode);
 	}
 
@@ -157,6 +156,7 @@ export default class MiniVimrc extends Plugin {
 	}
 
 	onunload() {
+		/* Runs when the user deactivate the plugin on the Settings */
 		if (this.CodeMirrorVimObj) {
 			this.CodeMirrorVimObj.mapclear();
 			this.logger('Unloaded vimrc');
