@@ -121,21 +121,19 @@ export default class MiniVimrc extends Plugin {
 
 	private process_unmaps(line: string[]) {
 		/* Process the unmap command */
-		//TODO: Need review. lhs and rhs?
 		let unmapMode = UnmapMode[line[0] as keyof typeof UnmapMode].toString();
 		//TODO: maybe the bellow is not needed since we are proceesing the keywords in the process_line()
 		if (!unmapMode) {
-			this.logger('Could not map line.', ...line, '. There is no map command')
+			this.logger('Could not map line.', ...line, '. There is no unmap command')
 			return
 		}
 		let lhs = line[1];
-		let rhs = line[2];
-		if (!lhs || !rhs) {
-			this.logger('Could not map line.', ...line, 'lhs or rhs not present')
+		if (!lhs) {
+			this.logger('Could not map line.', ...line, 'lhs not present')
 			return
 		}
-		this.logger(`Successfully mapped! ${line}`)
-		this.set_vim_unmap(lhs, rhs, unmapMode);
+		this.logger(`Successfully unmapped! Line: ${line}`)
+		this.set_vim_unmap(lhs, unmapMode);
 	}
 
 	private logger(...messages: string[]): void {
