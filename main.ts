@@ -78,7 +78,8 @@ export default class MiniVimrc extends Plugin {
 		}
 	}
 
-	private set_vim_keybidding(lhs: string, rhs: string, mode: string = 'normal'): void {
+	//TODO: do we need that default normal?
+	private set_vim_map(lhs: string, rhs: string, mode: string = 'normal'): void {
 		/* Set keybidings of imap, nmap, vmap */
 		let cmo = this.CodeMirrorVimObj as any;
 		if (mode === MapMode['map']) {
@@ -86,11 +87,17 @@ export default class MiniVimrc extends Plugin {
 			return
 		}
 		cmo.map(lhs, rhs, mode);
-		this.logger(`set_vim_keybidding: (${lhs}, ${rhs}, ${mode})`)
+		this.logger(`set_vim_map: (${lhs}, ${rhs}, ${mode})`)
 	};
-	private set_vim_unmap(lhs: string, rhs: string, mode: string = 'normal'): void {
-		//TODO: Complate this function
-		//DO we need the rhs and lhs
+
+	private set_vim_unmap(lhs: string, mode: string): void {
+		let cmo = this.CodeMirrorVimObj as any;
+		if (mode === UnmapMode['unmap']) {
+			cmo.unmap(lhs);
+			return
+		}
+		cmo.unmap(lhs, mode);
+		this.logger(`set_vim_unmap: (${lhs}, ${mode})`)
 	}
 
 	private async initialize() {
@@ -102,7 +109,6 @@ export default class MiniVimrc extends Plugin {
 
 	private process_maps(line_tokens: string[]) {
 		/* Process the map command */
-
 		let mapMode = MapMode[line_tokens[0] as keyof typeof MapMode].toString();
 		//TODO: maybe the bellow is not needed since we are proceesing the keywords in the process_line()
 		if (!mapMode) {
@@ -116,7 +122,7 @@ export default class MiniVimrc extends Plugin {
 			return
 		}
 		this.logger(`Successfully mapped! ${line_tokens}`)
-		this.set_vim_keybidding(lhs, rhs, mapMode);
+		this.set_vim_map(lhs, rhs, mapMode);
 	}
 
 	private process_unmaps(line: string[]) {
