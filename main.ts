@@ -12,13 +12,8 @@ enum MapMode {
 	'nmap' = 'normal',
 	'vmap' = 'visual',
 	'imap' = 'insert',
-	'map' = 'sentinel_value',
-}
-enum UnmapMode {
-	'nunmap' = 'normal',
-	'vunmap' = 'visual',
-	'iunmap' = 'insert',
-	'unmap' = 'sentinel_value',
+	'map' = 'map',
+	'unmap' = 'unmap',
 }
 
 export default class MiniVimrc extends Plugin {
@@ -42,24 +37,17 @@ export default class MiniVimrc extends Plugin {
 		/* Checks if the line is a map command */
 		return first_token in MapMode;
 	}
-	private is_unmap(first_token: string): boolean {
-		/* Checks if the line is a unmap command */
-		return first_token in UnmapMode;
-	}
 
 	private process_line(line: string): void {
 		/* Process a single line and runs the command there */
 		let trimmed_line = line.trim();
+		// Ignore comments and empty lines
 		if (trimmed_line.startsWith('"') || trimmed_line.length == 0) {
-			// Ignore comments and empty lines
 			return
 		}
 		let line_tokens = trimmed_line.split(' ');
 		if (this.is_map(line_tokens[0])) {
 			this.process_maps(line_tokens);
-		}
-		else if (this.is_unmap(line_tokens[0])) {
-			this.process_unmaps(line_tokens);
 		}
 		else {
 			this.logger('Could not process line', line_tokens[0], 'is not a map or unmap command');
@@ -79,8 +67,7 @@ export default class MiniVimrc extends Plugin {
 		}
 	}
 
-	//TODO: do we need that default normal?
-	private set_vim_map(lhs: string, rhs: string, mode: string = 'normal'): void {
+	private set_vim_map(lhs: string, rhs: string, mode: string): void {
 		/* Set keybidings of map, imap, nmap, vmap */
 		let cmo = this.CodeMirrorVimObj as any;
 		this.logger(`set_vim_map: (${lhs} ${rhs} ${mode})`)
@@ -91,14 +78,10 @@ export default class MiniVimrc extends Plugin {
 		cmo.map(lhs, rhs, mode);
 	};
 
-	private set_vim_unmap(lhs: string, mode: string): void {
+	private set_vim_unmap(lhs: string): void{
 		let cmo = this.CodeMirrorVimObj as any;
-		this.logger(`set_vim_unmap: (${lhs}, ${mode})`)
-		if (mode === UnmapMode['unmap']) {
-			cmo.unmap(lhs);
-			return
-		}
-		cmo.unmap(lhs, mode);
+		this.logger(`set_vim_unmap: ${lhs}`)
+		cmo.unmap(lhs)
 	}
 
 	private async initialize() {
@@ -118,27 +101,15 @@ export default class MiniVimrc extends Plugin {
 		}
 		let lhs = line_tokens[1];
 		let rhs = line_tokens[2];
+		if (mapMode === MapMode['unmap']) {
+			this.set_vim_unmap(lhs)
+			return
+		}
 		if (!lhs || !rhs) {
 			this.logger('Could not map line.', ...line_tokens, 'lhs or rhs not present')
 			return
 		}
 		this.set_vim_map(lhs, rhs, mapMode);
-	}
-
-	private process_unmaps(line: string[]) {
-		/* Process the unmap command */
-		let unmapMode = UnmapMode[line[0] as keyof typeof UnmapMode].toString();
-		//TODO: maybe the bellow is not needed since we are proceesing the keywords in the process_line()
-		if (!unmapMode) {
-			this.logger('Could not map line.', ...line, '. There is no unmap command')
-			return
-		}
-		let lhs = line[1];
-		if (!lhs) {
-			this.logger('Could not map line.', ...line, 'lhs not present')
-			return
-		}
-		this.set_vim_unmap(lhs, unmapMode);
 	}
 
 	private logger(...messages: string[]): void {
