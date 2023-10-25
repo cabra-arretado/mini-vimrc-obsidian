@@ -1,4 +1,4 @@
-import { Notice, Plugin } from 'obsidian';
+import { App, Notice, Plugin, PluginSettingTab } from 'obsidian';
 
 interface MiniVimrcSettings {
 	vimrcPath: string;
@@ -113,6 +113,7 @@ export default class MiniVimrc extends Plugin {
 	}
 
 	async onload() {
+		this.addSettingTab(new SettingsTab(this.app, this))
 		await this.initialize();
 		await this.loadSettings();
 		if (this.CodeMirrorVimObj) {
@@ -140,3 +141,19 @@ export default class MiniVimrc extends Plugin {
 	}
 }
 
+class SettingsTab extends PluginSettingTab {
+	plugin: MiniVimrc
+
+	constructor(app: App, plugin: MiniVimrc) {
+		// TODO: see if that is necessary
+		super(app, plugin)
+		this.plugin = plugin
+	}
+
+	display() {
+	    let { containerEl } = this
+		containerEl.empty()
+		containerEl.createEl('h1', { text: 'Mini Vimrc Settings'})
+
+	}
+}
