@@ -143,7 +143,6 @@ class SettingsTab extends PluginSettingTab {
 	plugin: MiniVimrc
 
 	constructor(app: App, plugin: MiniVimrc) {
-		// TODO: see if that is necessary
 		super(app, plugin)
 		this.plugin = plugin
 	}
@@ -153,6 +152,9 @@ class SettingsTab extends PluginSettingTab {
 		containerEl.empty()
 
 		containerEl.createEl('h1', { text: 'Mini Vimrc Settings' })
+
+		const documentationUrl = "https://github.com/cabra-arretado/mini-vimrc-obsidian"
+
 		const settingsDescription = containerEl.createEl('div', { cls: 'settings-description' })
 
 		settingsDescription.appendChild(
@@ -164,7 +166,7 @@ class SettingsTab extends PluginSettingTab {
 		settingsDescription.appendChild(
 			createEl('a', {
 				text: "documentation",
-				href: "https://github.com/cabra-arretado/mini-vimrc-obsidian?tab=readme-ov-file#mini-vim-keymaps-obsidian-plugin",
+				href: documentationUrl
 			})
 		);
 		settingsDescription.appendText(' for details.');
@@ -172,7 +174,7 @@ class SettingsTab extends PluginSettingTab {
 		containerEl.createEl('br')
 
 		new Setting(containerEl)
-			.setName('Vimrc name and path')
+			.setName('Vimrc path')
 			.setDesc('Relative path to the target vimrc file.')
 			.addText((text) => {
 				text.setPlaceholder(DEFAULT_SETTINGS.vimrcPath);
