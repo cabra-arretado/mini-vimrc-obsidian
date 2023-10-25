@@ -94,11 +94,6 @@ export default class MiniVimrc extends Plugin {
 	private process_maps(line_tokens: string[]) {
 		/* Process the map command */
 		let mapMode = MapMode[line_tokens[0] as keyof typeof MapMode].toString();
-		//TODO: maybe the bellow is not needed since we are proceesing the keywords in the process_line()
-		if (!mapMode) {
-			this.logger('Could not map line.', ...line_tokens, '. There is no map command')
-			return
-		}
 		let lhs = line_tokens[1];
 		let rhs = line_tokens[2];
 		if (mapMode === MapMode['unmap']) {
@@ -106,7 +101,7 @@ export default class MiniVimrc extends Plugin {
 			return
 		}
 		if (!lhs || !rhs) {
-			this.logger('Could not map line.', ...line_tokens, 'lhs or rhs not present')
+			this.logger('Could not map line.', line_tokens.join(" "), 'lhs or rhs not present')
 			return
 		}
 		this.set_vim_map(lhs, rhs, mapMode);
@@ -115,7 +110,7 @@ export default class MiniVimrc extends Plugin {
 	private logger(...messages: string[]): void {
 		/* To log messages to user */
 		let prefix = 'Mini Vimrc Plugin:';
-		console.log(prefix, messages);
+		console.log(prefix, messages.join(' '));
 	}
 
 	async onload() {
