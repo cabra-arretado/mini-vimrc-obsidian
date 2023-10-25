@@ -1,11 +1,11 @@
 import { Notice, Plugin } from 'obsidian';
 
 interface MiniVimrcSettings {
-	mySetting: string;
+	vimrcPath: string;
 }
 
 const DEFAULT_SETTINGS: MiniVimrcSettings = {
-	mySetting: 'default'
+	vimrcPath: '.vimrc'
 }
 
 enum MapMode {
@@ -133,7 +133,10 @@ export default class MiniVimrc extends Plugin {
 	}
 
 	async saveSettings() {
+		// TODO: To check if that is necessary
 		await this.saveData(this.settings);
+		this.onunload()
+		await this.onload()
 	}
 }
 
