@@ -6,8 +6,6 @@ In this repo we look for creating a minimal plugin for Obsidian that does only o
 - [x] imap
 - [x] nmap
 - [x] vmap
-- [ ] iunmap
-- [ ] vunmap
 - [ ] nunmap
 
 ## Getting started
