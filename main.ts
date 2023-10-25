@@ -25,8 +25,7 @@ export default class MiniVimrc extends Plugin {
 		/* Reads and executes one-by-one lines of the Vimrc file */
 		let file = await this.read_file(this.vimrc_path);
 		let lines = file.split('\n');
-		console.log(lines)
-		this.logger("Processing vimrc file", lines.length.toString(), "lines");
+		this.logger(`Processing vimrc file ${lines.length.toString()} lines`);
 		for (let line of lines) {
 			this.process_line(line);
 		}
@@ -50,7 +49,7 @@ export default class MiniVimrc extends Plugin {
 			this.process_maps(line_tokens);
 		}
 		else {
-			this.logger('Could not process line', line_tokens[0], 'is not a map or unmap command');
+			this.logger(`Could not process line "${line_tokens.join(" ")}". ${line_tokens[0]} is not a map or unmap command`);
 		}
 	}
 
@@ -101,16 +100,16 @@ export default class MiniVimrc extends Plugin {
 			return
 		}
 		if (!lhs || !rhs) {
-			this.logger('Could not map line.', line_tokens.join(" "), 'lhs or rhs not present')
+			this.logger(`Could not map line: ${line_tokens.join(" ")}. lhs or rhs not present`)
 			return
 		}
 		this.set_vim_map(lhs, rhs, mapMode);
 	}
 
-	private logger(...messages: string[]): void {
+	private logger(message: string): void {
 		/* To log messages to user */
 		let prefix = 'Mini Vimrc Plugin:';
-		console.log(prefix, messages.join(' '));
+		console.log(prefix, message)
 	}
 
 	async onload() {
