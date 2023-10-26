@@ -1,11 +1,11 @@
-import { Notice, Plugin } from 'obsidian';
+import { App, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 interface MiniVimrcSettings {
-	mySetting: string;
+	vimrcPath: string;
 }
 
 const DEFAULT_SETTINGS: MiniVimrcSettings = {
-	mySetting: 'default'
+	vimrcPath: '.vimrc'
 }
 
 enum MapMode {
@@ -19,11 +19,11 @@ enum MapMode {
 export default class MiniVimrc extends Plugin {
 	settings: MiniVimrcSettings;
 	private CodeMirrorVimObj: any = null;
-	private vimrc_path: string = '.vimrc';
+	private vimrcPath: string;
 
 	private async process_vimrc(): Promise<void> {
 		/* Reads and executes one-by-one lines of the Vimrc file */
-		let file = await this.read_file(this.vimrc_path);
+		let file = await this.read_file(this.vimrcPath);
 		let lines = file.split('\n');
 		this.logger(`Processing vimrc file ${lines.length.toString()} lines`);
 		for (let line of lines) {
@@ -61,7 +61,7 @@ export default class MiniVimrc extends Plugin {
 			return file.trim();
 		}
 		catch (err) {
-			new Notice(`Could not find the file in ${path}`)
+			new Notice(`Could not find the vimrc file in ${path}`)
 			throw new Error(`Failed to read file ${path}`);
 		}
 	}
@@ -77,7 +77,7 @@ export default class MiniVimrc extends Plugin {
 		cmo.map(lhs, rhs, mode);
 	};
 
-	private set_vim_unmap(lhs: string): void{
+	private set_vim_unmap(lhs: string): void {
 		let cmo = this.CodeMirrorVimObj as any;
 		this.logger(`set_vim_unmap: ${lhs}`)
 		cmo.unmap(lhs)
@@ -88,6 +88,7 @@ export default class MiniVimrc extends Plugin {
 		if (!this.CodeMirrorVimObj) {
 			this.CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
 		}
+		this.vimrcPath = this.settings.vimrcPath
 	}
 
 	private process_maps(line_tokens: string[]) {
@@ -113,8 +114,9 @@ export default class MiniVimrc extends Plugin {
 	}
 
 	async onload() {
-		await this.initialize();
 		await this.loadSettings();
+		this.addSettingTab(new SettingsTab(this.app, this))
+		await this.initialize();
 		if (this.CodeMirrorVimObj) {
 			await this.process_vimrc();
 		}
@@ -137,3 +139,50 @@ export default class MiniVimrc extends Plugin {
 	}
 }
 
+class SettingsTab extends PluginSettingTab {
+	plugin: MiniVimrc
+
+	constructor(app: App, plugin: MiniVimrc) {
+		super(app, plugin)
+		this.plugin = plugin
+	}
+
+	display() {
+		let { containerEl } = this
+		containerEl.empty()
+
+		containerEl.createEl('h1', { text: 'Mini Vimrc Settings' })
+
+		const documentationUrl = "https://github.com/cabra-arretado/mini-vimrc-obsidian"
+
+		const settingsDescription = containerEl.createEl('div', { cls: 'settings-description' })
+
+		settingsDescription.appendChild(
+			createEl('span', {
+				text: 'See '
+			})
+		);
+
+		settingsDescription.appendChild(
+			createEl('a', {
+				text: "documentation",
+				href: documentationUrl
+			})
+		);
+		settingsDescription.appendText(' for details.');
+
+		containerEl.createEl('br')
+
+		new Setting(containerEl)
+			.setName('Vimrc path')
+			.setDesc('Relative path to the target vimrc file.')
+			.addText((text) => {
+				text.setPlaceholder(DEFAULT_SETTINGS.vimrcPath);
+				text.setValue(this.plugin.settings.vimrcPath || DEFAULT_SETTINGS.vimrcPath);
+				text.onChange(value => {
+					this.plugin.settings.vimrcPath = value;
+					this.plugin.saveSettings();
+				})
+			});
+	}
+}
