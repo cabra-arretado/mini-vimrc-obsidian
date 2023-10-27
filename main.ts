@@ -22,6 +22,9 @@ export default class MiniVimrc extends Plugin {
 	private vimrcPath: string;
 
 	private async process_vimrc(): Promise<void> {
+		if (this.vimrcPath){
+
+		}
 		/* Reads and executes one-by-one lines of the Vimrc file */
 		let file = await this.read_file(this.vimrcPath);
 		let lines = file.split('\n');
@@ -56,8 +59,8 @@ export default class MiniVimrc extends Plugin {
 	private async read_file(path: string): Promise<string> {
 		/* The name says it all */
 		try {
+			this.logger(`Attempting to read vimrc file in path "${path}"`);
 			let file = await this.app.vault.adapter.read(path);
-			this.logger(`Read file ${path}`);
 			return file.trim();
 		}
 		catch (err) {
@@ -88,7 +91,15 @@ export default class MiniVimrc extends Plugin {
 		if (!this.CodeMirrorVimObj) {
 			this.CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
 		}
-		this.vimrcPath = this.settings.vimrcPath
+		// Let's make sure that the user has not erased the path
+		if (this.settings.vimrcPath) {
+			this.logger("Custom vimrc file path set.")
+			this.vimrcPath = this.settings.vimrcPath
+		} else {
+			this.logger("No custom vimrc file path set. Using default.")
+			this.vimrcPath = DEFAULT_SETTINGS.vimrcPath
+			this.settings.vimrcPath = DEFAULT_SETTINGS.vimrcPath
+		}
 	}
 
 	private process_maps(line_tokens: string[]) {
@@ -155,7 +166,7 @@ class SettingsTab extends PluginSettingTab {
 
 		const documentationUrl = "https://github.com/cabra-arretado/mini-vimrc-obsidian"
 
-		const settingsDescription = containerEl.createEl('div', { cls: 'settings-description' })
+		const settingsDescription = containerEl.createDiv()
 
 		settingsDescription.appendChild(
 			createEl('span', {
