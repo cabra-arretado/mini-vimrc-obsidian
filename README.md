@@ -37,7 +37,7 @@ map ; :
 ### Settings
 ##### Vimrc path
 The default path is on the root folder `.vimrc`.
-You can change that for an Markdown file or a simple text file.
+You can change that for a Markdown file or a simple text file.
 In any case they will be treated as a `.vimrc` file, and each line will be read (and comment lines start with `"` as you could see in the example above).
 
 Markdown file is an option in case you want to access and edit the file in Obsidian itself.
