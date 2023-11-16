@@ -2,10 +2,14 @@ import { App, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 interface MiniVimrcSettings {
 	vimrcPath: string;
+	tabsNum: number;
+	guiMaps: string[];
 }
 
 const DEFAULT_SETTINGS: MiniVimrcSettings = {
-	vimrcPath: '.vimrc'
+	vimrcPath: '.vimrc',
+	tabsNum: 1,
+	guiMaps: []
 }
 
 enum MapMode {
@@ -22,7 +26,7 @@ export default class MiniVimrc extends Plugin {
 	private vimrcPath: string;
 
 	private async process_vimrc(): Promise<void> {
-		if (this.vimrcPath){
+		if (this.vimrcPath) {
 
 		}
 		/* Reads and executes one-by-one lines of the Vimrc file */
@@ -195,5 +199,30 @@ class SettingsTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 				})
 			});
+
+		containerEl.createEl('br')
+
+		new Setting(containerEl)
+			.setName('The number of fields')
+			.addText((num) => {
+				num.setPlaceholder('1');
+				num.setValue(this.plugin.settings.tabsNum.toString());
+				num.onChange(value => {
+					this.plugin.settings.tabsNum = Number(value);
+					this.plugin.saveSettings();
+					this.display()
+				})
+			});
+		for (let i = 0; i < this.plugin.settings.tabsNum; i++) {
+			new Setting(containerEl)
+				.setName(`test_${i}`)
+				.addText((num) => {
+					num.setPlaceholder('foo');
+					num.setValue(this.plugin.settings.tabsNum.toString());
+					num.onChange(value => {
+						this.plugin.settings.guiMaps.push(value)
+					})
+				});
+		}
 	}
 }
