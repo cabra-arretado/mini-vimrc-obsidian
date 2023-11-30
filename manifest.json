@@ -1,7 +1,7 @@
 {
 	"id": "mini-vimrc",
 	"name": "Mini Vimrc",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
 	"description": "Set Vim keybiddings via .vimrc file.",
 	"author": "Felipe M.",
