@@ -1,4 +1,4 @@
-import { App, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, ExtraButtonComponent, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 interface MiniVimrcSettings {
 	vimrcPath: string;
@@ -201,28 +201,17 @@ class SettingsTab extends PluginSettingTab {
 			});
 
 		containerEl.createEl('br')
+		let div = containerEl.createEl('div')
 
 		new Setting(containerEl)
 			.setName('The number of fields')
-			.addText((num) => {
-				num.setPlaceholder('1');
-				num.setValue(this.plugin.settings.tabsNum.toString());
-				num.onChange(value => {
-					this.plugin.settings.tabsNum = Number(value);
-					this.plugin.saveSettings();
-					this.display()
-				})
-			});
-		for (let i = 0; i < this.plugin.settings.tabsNum; i++) {
-			new Setting(containerEl)
-				.setName(`test_${i}`)
-				.addText((num) => {
-					num.setPlaceholder('foo');
-					num.setValue(this.plugin.settings.tabsNum.toString());
-					num.onChange(value => {
-						this.plugin.settings.guiMaps.push(value)
-					})
-				});
-		}
+			.addExtraButton(() => {
+			return new ExtraButtonComponent(div)
+		})
+		new Setting(containerEl)
+			.setName('The number of fields')
+			.addExtraButton(() => {
+			return new ExtraButtonComponent(div)
+		})
 	}
 }
