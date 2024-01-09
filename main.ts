@@ -8,13 +8,13 @@ const DEFAULT_SETTINGS: MiniVimrcSettings = {
 	vimrcPath: '.vimrc'
 }
 
-enum MapMode {
-	'nmap' = 'normal',
-	'vmap' = 'visual',
-	'imap' = 'insert',
-	'map' = 'map',
-	'unmap' = 'unmap',
-}
+const MapMode = {
+	'nmap': 'normal',
+	'vmap': 'visual',
+	'imap': 'insert',
+	'map': 'map',
+	'unmap': 'unmap',
+} as const
 
 export default class MiniVimrc extends Plugin {
 	settings: MiniVimrcSettings;
