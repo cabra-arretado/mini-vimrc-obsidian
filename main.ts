@@ -8,6 +8,20 @@ const DEFAULT_SETTINGS: MiniVimrcSettings = {
 	vimrcPath: '.vimrc'
 }
 
+type CodeMirrorAdapterType = {
+	/* Full API can be seen here: https://codemirror.net/5/doc/manual.html#vimapi */
+	Vim: {
+		map: (lhs: string, rhs: string, mode: string) => void;
+		unmap: (lhs: string) => void;
+		mapclear: () => void;
+	};
+};
+
+declare const window: {
+	/* Just a type helper to make the code more readable */
+	CodeMirrorAdapter?: CodeMirrorAdapterType | undefined;
+};
+
 const MapMode = {
 	'nmap': 'normal',
 	'vmap': 'visual',
@@ -18,7 +32,10 @@ const MapMode = {
 
 export default class MiniVimrc extends Plugin {
 	settings: MiniVimrcSettings;
-	private CodeMirrorVimObj: any = null;
+	// TODO: To make sure that turning that into optional is not a problem
+	// old line:
+	// private CodeMirrorVimObj: any = null;
+	private CodeMirrorVimObj?: CodeMirrorAdapterType = undefined;
 	private vimrcPath: string;
 
 	private async process_vimrc(): Promise<void> {
@@ -88,8 +105,10 @@ export default class MiniVimrc extends Plugin {
 	private async initialize() {
 		/* Runs in the onload() */
 		if (!this.CodeMirrorVimObj) {
-			this.CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
+		//TODO: To make sure that we have a window.CodeMirrorAdapter.Vim
+			this.CodeMirrorVimObj = window.CodeMirrorAdapter.Vim;
 		}
+		//TODO: To make test with that if VIM mode is not enabled
 		// Let's make sure that the user has not erased the path
 		if (this.settings.vimrcPath) {
 			this.logger("Custom vimrc file path set.")
