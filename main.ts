@@ -34,9 +34,6 @@ const MapMode = {
 
 export default class MiniVimrc extends Plugin {
 	settings: MiniVimrcSettings;
-	// TODO: To make sure that turning that into optional is not a problem
-	// old line:
-	// private CodeMirrorVimObj: any = null;
 	private CodeMirrorVimObj: VimType;
 	private vimrcPath: string;
 
@@ -107,10 +104,8 @@ export default class MiniVimrc extends Plugin {
 	private async initialize() {
 		/* Runs in the onload() */
 		if (!this.CodeMirrorVimObj) {
-			//TODO: To make sure that we have a window.CodeMirrorAdapter.Vim
 			this.CodeMirrorVimObj = window.CodeMirrorAdapter.Vim;
 		}
-		//TODO: To make test with that if VIM mode is not enabled
 		// Let's make sure that the user has not erased the path
 		if (this.settings.vimrcPath) {
 			this.logger("Custom vimrc file path set.")
