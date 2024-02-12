@@ -8,17 +8,33 @@ const DEFAULT_SETTINGS: MiniVimrcSettings = {
 	vimrcPath: '.vimrc'
 }
 
-enum MapMode {
-	'nmap' = 'normal',
-	'vmap' = 'visual',
-	'imap' = 'insert',
-	'map' = 'map',
-	'unmap' = 'unmap',
-}
+type VimType = {
+	/* Full API can be seen here: https://codemirror.net/5/doc/manual.html#vimapi */
+	map: (lhs: string, rhs: string, mode?: string) => void;
+	unmap: (lhs: string) => void;
+	mapclear: () => void;
+};
+
+type CodeMirrorAdapterType = {
+	Vim: VimType;
+};
+
+declare const window: {
+	/* Just a type helper to make the code more readable */
+	CodeMirrorAdapter: CodeMirrorAdapterType;
+};
+
+const MapMode = {
+	'nmap': 'normal',
+	'vmap': 'visual',
+	'imap': 'insert',
+	'map': 'map',
+	'unmap': 'unmap',
+} as const
 
 export default class MiniVimrc extends Plugin {
 	settings: MiniVimrcSettings;
-	private CodeMirrorVimObj: any = null;
+	private CodeMirrorVimObj: VimType;
 	private vimrcPath: string;
 
 	private async process_vimrc(): Promise<void> {
@@ -70,7 +86,7 @@ export default class MiniVimrc extends Plugin {
 
 	private set_vim_map(lhs: string, rhs: string, mode: string): void {
 		/* Set keybidings of map, imap, nmap, vmap */
-		const cmo = this.CodeMirrorVimObj as any;
+		const cmo: VimType = this.CodeMirrorVimObj;
 		this.logger(`set_vim_map: (${lhs} ${rhs} ${mode})`)
 		if (mode === MapMode['map']) {
 			cmo.map(lhs, rhs);
@@ -80,7 +96,7 @@ export default class MiniVimrc extends Plugin {
 	}
 
 	private set_vim_unmap(lhs: string): void {
-		const cmo = this.CodeMirrorVimObj as any;
+		const cmo: VimType = this.CodeMirrorVimObj;
 		this.logger(`set_vim_unmap: ${lhs}`)
 		cmo.unmap(lhs)
 	}
@@ -88,7 +104,7 @@ export default class MiniVimrc extends Plugin {
 	private async initialize() {
 		/* Runs in the onload() */
 		if (!this.CodeMirrorVimObj) {
-			this.CodeMirrorVimObj = (window as any).CodeMirrorAdapter?.Vim;
+			this.CodeMirrorVimObj = window.CodeMirrorAdapter.Vim;
 		}
 		// Let's make sure that the user has not erased the path
 		if (this.settings.vimrcPath) {
