@@ -6,6 +6,10 @@ In this repo we look to create a minimal plugin for Obsidian that does only one 
 - [x] imap
 - [x] nmap
 - [x] vmap
+- [x] noremap
+- [x] inoremap
+- [x] nnoremap
+- [x] vnoremap
 - [x] unmap
 
 ## Getting started
@@ -16,23 +20,23 @@ Create a `.vimrc` in the root of your Obsidian vault with the desired commands.
 ### Example of `.vimrc`
 ``` vimscript
 " Use sequential pressing of keys j and k to escape insert mode (really common config for VIM)
-imap jk <Esc>
-imap JK <Esc>
+inoremap jk <Esc>
+inoremap JK <Esc>
 
 " The keys j and k for visual and normal mode go to the visual line instead of the logical one (Really useful for a more organic experience)
-map j gj
-map k gk
+noremap j gj
+noremap k gk
 
 " Uses H and L To navigate between blank lines in Visual and Normal modes.
-map H {
-map L }
+noremap H {
+noremap L }
 
 " Uses K and J to scroll back and forth in Visual and Normal modes
-map K <C-b>
-map J <C-f>
+noremap K <C-b>
+noremap J <C-f>
 
 " Uses ; to start commands in Visual and Normal modes
-map ; :
+noremap ; :
 ```
 ### Settings
 ##### Vimrc path
@@ -51,7 +55,7 @@ Obsidian offers a Vim mode editor, powered by CodeMirror. Keymaps work in such a
 This is where this plugin gets in the game: With a `.vimrc` file in the Obsidian vault, we will be able to declare keymaps and set basic options to be automatically initialized every time Obsidian is open.
 
 ## Why a plugin that does only keymaps and not only all the other Vim configurations?
-We want to create a plugin that is minimal and performs only one function.
+We want to create a plugin that is minimal and performs only one thing.
 With that design, the plugin becomes:
 * *Easier to understand*: So even without a lot of context one can check the plugin code before adding to your Obsidian vault.
 * *Maintainable*: So that if any API changes Obsidian or its dependencies happen, we can easily update the code and functionality.

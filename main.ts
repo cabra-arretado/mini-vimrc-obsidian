@@ -12,6 +12,7 @@ type VimType = {
 	/* Full API can be seen here: https://codemirror.net/5/doc/manual.html#vimapi */
 	map: (lhs: string, rhs: string, mode?: string) => void;
 	unmap: (lhs: string) => void;
+	noremap: (lhs: string, rhs: string, mode?: string | Array<string>) => void;
 	mapclear: () => void;
 };
 
@@ -28,7 +29,11 @@ const MapMode = {
 	'nmap': 'normal',
 	'vmap': 'visual',
 	'imap': 'insert',
-	'map': 'map',
+	'map': 'general',
+	'nnoremap': 'normal',
+	'vnoremap': 'visual',
+	'inoremap': 'insert',
+	'noremap': 'general',
 	'unmap': 'unmap',
 } as const
 
@@ -50,7 +55,7 @@ export default class MiniVimrc extends Plugin {
 		}
 	}
 
-	private is_map(first_token: string): boolean {
+	private is_map_command(first_token: string): boolean {
 		/* Checks if the line is a map command */
 		return first_token in MapMode;
 	}
@@ -63,7 +68,7 @@ export default class MiniVimrc extends Plugin {
 			return
 		}
 		const line_tokens = trimmed_line.split(' ');
-		if (this.is_map(line_tokens[0])) {
+		if (this.is_map_command(line_tokens[0])) {
 			this.process_maps(line_tokens);
 		}
 		else {
@@ -85,7 +90,7 @@ export default class MiniVimrc extends Plugin {
 	}
 
 	private set_vim_map(lhs: string, rhs: string, mode: string): void {
-		/* Set keybidings of map, imap, nmap, vmap */
+		/* Set keybidings of map variants */
 		const cmo: VimType = this.CodeMirrorVimObj;
 		this.logger(`set_vim_map: (${lhs} ${rhs} ${mode})`)
 		if (mode === MapMode['map']) {
@@ -93,6 +98,17 @@ export default class MiniVimrc extends Plugin {
 			return
 		}
 		cmo.map(lhs, rhs, mode);
+	}
+
+	private set_vim_noremap(lhs: string, rhs: string, mode: string): void {
+		/* Set keybidings of noremap variants */
+		const cmo: VimType = this.CodeMirrorVimObj;
+		this.logger(`set_vim_noremap: (${lhs} ${rhs} ${mode})`)
+		if (mode === MapMode['noremap']) {
+			cmo.noremap(lhs, rhs);
+			return
+		}
+		cmo.noremap(lhs, rhs, mode);
 	}
 
 	private set_vim_unmap(lhs: string): void {
@@ -128,6 +144,10 @@ export default class MiniVimrc extends Plugin {
 		}
 		if (!lhs || !rhs) {
 			this.logger(`Could not map line: ${line_tokens.join(" ")}. lhs or rhs not present`)
+			return
+		}
+		if (line_tokens[0].endsWith('noremap')) {
+			this.set_vim_noremap(lhs, rhs, mapMode);
 			return
 		}
 		this.set_vim_map(lhs, rhs, mapMode);
